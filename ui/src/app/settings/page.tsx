@@ -4,8 +4,11 @@ import { useEffect, useState } from 'react';
 import useSettings from '@/hooks/useSettings';
 import { TopBar, MainContent } from '@/components/layout';
 import { apiClient } from '@/utils/api';
+import { useTranslation } from '@/hooks/useLocale';
+import LanguageSwitcher from '@/components/LanguageSwitcher';
 
 export default function Settings() {
+  const { t } = useTranslation();
   const { settings, setSettings } = useSettings();
   const [status, setStatus] = useState<'idle' | 'saving' | 'success' | 'error'>('idle');
 
@@ -36,12 +39,18 @@ export default function Settings() {
     <>
       <TopBar>
         <div>
-          <h1 className="text-lg">Settings</h1>
+          <h1 className="text-lg">{t('settings.title')}</h1>
         </div>
         <div className="flex-1"></div>
       </TopBar>
       <MainContent>
         <form onSubmit={handleSubmit} className="space-y-6">
+          {/* 语言设置 */}
+          <div className="mb-8">
+            <h2 className="text-lg font-semibold mb-4">{t('settings.general')}</h2>
+            <LanguageSwitcher />
+          </div>
+          
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
             <div>
               <div className="space-y-4">

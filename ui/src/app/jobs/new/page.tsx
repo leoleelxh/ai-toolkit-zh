@@ -18,10 +18,12 @@ import SimpleJob from './SimpleJob';
 import AdvancedJob from './AdvancedJob';
 import ErrorBoundary from '@/components/ErrorBoundary';
 import { apiClient } from '@/utils/api';
+import { useTranslation } from '@/hooks/useLocale';
 
 const isDev = process.env.NODE_ENV === 'development';
 
 export default function TrainingForm() {
+  const { t } = useTranslation();
   const router = useRouter();
   const searchParams = useSearchParams();
   const runId = searchParams.get('id');
@@ -129,7 +131,7 @@ export default function TrainingForm() {
           </Button>
         </div>
         <div>
-          <h1 className="text-lg">{runId ? 'Edit Training Job' : 'New Training Job'}</h1>
+          <h1 className="text-lg">{runId ? t('jobs.editTrainingJob') : t('jobs.newTrainingJob')}</h1>
         </div>
         <div className="flex-1"></div>
         {showAdvancedView && (
@@ -150,7 +152,7 @@ export default function TrainingForm() {
             className="text-gray-200 bg-gray-800 px-3 py-1 rounded-md"
             onClick={() => setShowAdvancedView(!showAdvancedView)}
           >
-            {showAdvancedView ? 'Show Simple' : 'Show Advanced'}
+            {showAdvancedView ? t('common.showSimple') : t('common.showAdvanced')}
           </Button>
         </div>
         <div>
@@ -159,7 +161,7 @@ export default function TrainingForm() {
             onClick={() => saveJob()}
             disabled={status === 'saving'}
           >
-            {status === 'saving' ? 'Saving...' : runId ? 'Update Job' : 'Create Job'}
+            {status === 'saving' ? t('jobs.status.saving') : runId ? t('common.update') : t('common.create')}
           </Button>
         </div>
       </TopBar>

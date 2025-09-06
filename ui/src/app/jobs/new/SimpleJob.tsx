@@ -8,7 +8,8 @@ import { TextInput, SelectInput, Checkbox, FormGroup, NumberInput } from '@/comp
 import Card from '@/components/Card';
 import { X } from 'lucide-react';
 import AddSingleImageModal, { openAddImageModal } from '@/components/AddSingleImageModal';
-import {FlipHorizontal2, FlipVertical2} from "lucide-react"
+import {FlipHorizontal2, FlipVertical2} from "lucide-react";
+import { useTranslation } from '@/hooks/useLocale';
 
 type Props = {
   jobConfig: JobConfig;
@@ -35,6 +36,7 @@ export default function SimpleJob({
   gpuList,
   datasetOptions,
 }: Props) {
+  const { t } = useTranslation();
   const modelArch = useMemo(() => {
     return modelArchs.find(a => a.name === jobConfig.config.process[0].model.arch) as ModelArch;
   }, [jobConfig.config.process[0].model.arch]);

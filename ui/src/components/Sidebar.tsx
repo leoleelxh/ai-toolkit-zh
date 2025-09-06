@@ -1,14 +1,17 @@
 import Link from 'next/link';
 import { Home, Settings, BrainCircuit, Images, Plus} from 'lucide-react';
 import { FaXTwitter, FaDiscord, FaYoutube } from "react-icons/fa6";
+import { useTranslation } from '@/hooks/useLocale';
 
 const Sidebar = () => {
+  const { t } = useTranslation();
+  
   const navigation = [
-    { name: 'Dashboard', href: '/dashboard', icon: Home },
-    { name: 'New Job', href: '/jobs/new', icon: Plus },
-    { name: 'Training Jobs', href: '/jobs', icon: BrainCircuit },
-    { name: 'Datasets', href: '/datasets', icon: Images },
-    { name: 'Settings', href: '/settings', icon: Settings },
+    { name: t('navigation.dashboard'), href: '/dashboard', icon: Home },
+    { name: t('navigation.newJob'), href: '/jobs/new', icon: Plus },
+    { name: t('navigation.jobs'), href: '/jobs', icon: BrainCircuit },
+    { name: t('navigation.datasets'), href: '/datasets', icon: Images },
+    { name: t('navigation.settings'), href: '/settings', icon: Settings },
   ];
 
   const socialsBoxClass = 'flex flex-col items-center justify-center p-1 hover:bg-gray-800 rounded-lg transition-colors';
