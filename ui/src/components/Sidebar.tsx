@@ -1,3 +1,5 @@
+'use client';
+
 import Link from 'next/link';
 import { Home, Settings, BrainCircuit, Images, Plus} from 'lucide-react';
 import { FaXTwitter, FaDiscord, FaYoutube } from "react-icons/fa6";

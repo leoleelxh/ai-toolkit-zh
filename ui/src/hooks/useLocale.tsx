@@ -33,21 +33,33 @@ const enUS = {
     cancel: "Cancel",
     confirm: "Confirm",
     delete: "Delete",
-    // ... 其他常用词汇
+    create: "Create",
+    update: "Update",
+    loading: "Loading...",
+    showSimple: "Show Simple",
+    showAdvanced: "Show Advanced"
   },
   navigation: {
     dashboard: "Dashboard", 
     jobs: "Training Jobs",
     datasets: "Datasets",
-    settings: "Settings"
+    settings: "Settings",
+    newJob: "New Job"
   },
   jobs: {
     title: "AI Model Training Jobs",
     newTrainingJob: "New Training Job",
-    trainingName: "Training Name"
-    // ... 其他翻译
+    editTrainingJob: "Edit Training Job",
+    trainingName: "Training Name",
+    status: {
+      saving: "Saving..."
+    }
+  },
+  settings: {
+    title: "Settings",
+    general: "General",
+    language: "Language"
   }
-  // ... 其他分类
 };
 
 export const LocaleProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
