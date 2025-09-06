@@ -1,0 +1,97 @@
+---
+# 作业类型：extension（扩展）
+job: extension
+config:
+  # 此名称将成为文件夹和文件名
+  name: "我的第一个flux_lora_v1"
+  process:
+    - type: 'sd_trainer'  # 稳定扩散训练器类型
+      # 保存训练会话/样本/权重的根文件夹
+      training_folder: "output"
+      # 取消注释以在终端中每 N 步查看性能统计信息
+#      performance_log_every: 1000
+      device: cuda:0  # GPU 设备编号
+      # 如果指定了触发词，它将添加到训练数据的标题中（如果不存在）
+      # 或者，您可以在标题中添加 [trigger]，它将被替换为触发词
+#      trigger_word: "p3r5on"  # 触发词，用于激活训练的概念
+      network:
+        type: "lora"  # 网络类型：LoRA（低秩适应）
+        linear: 16    # 线性层维度，影响模型容量和文件大小
+        linear_alpha: 16  # Alpha参数，控制LoRA的学习强度
+      save:
+        dtype: float16  # 保存精度：float16 节省空间但可能轻微影响质量
+        save_every: 250  # 每这么多步保存一次检查点
+        max_step_saves_to_keep: 4  # 保留多少个中间保存文件
+        push_to_hub: false  # 改为 True 以将训练好的模型推送到 Hugging Face
+        # 您可以设置 HF_TOKEN 环境变量或您将被提示登录         
+#       hf_repo_id: 您的用户名/您的模型名称
+#       hf_private: true  # 仓库是私有还是公开
+      datasets:
+        # 数据集是图像文件夹。标题需要是与图像同名的 txt 文件
+        # 例如 image2.jpg 和 image2.txt。目前仅支持 jpg、jpeg 和 png
+        # 图像将自动调整大小并分桶到指定的分辨率
+        # 在 Windows 上，用另一个反斜杠转义反斜杠，如
+        # "C:\\path\\to\\images\\folder"
+        - folder_path: "/path/to/images/folder"  # 图像文件夹路径
+          caption_ext: "txt"  # 标题文件扩展名
+          caption_dropout_rate: 0.05  # 5% 的时间会丢弃标题（数据增强）
+          shuffle_tokens: false  # 打乱标题顺序，按逗号分隔
+          cache_latents_to_disk: true  # 保持为 true，除非您知道自己在做什么
+          resolution: [ 512, 768, 1024 ]  # FLUX 支持多种分辨率
+      train:
+        batch_size: 1  # 批处理大小，受显存限制
+        steps: 2000  # 总训练步数，500-4000 是好的范围
+        gradient_accumulation_steps: 1  # 梯度累积步数，可以模拟更大的批处理
+        train_unet: true  # 训练 UNet（图像生成的核心网络）
+        train_text_encoder: false  # 可能不适用于 FLUX
+        gradient_checkpointing: true  # 需要启用，除非您有大量显存
+        noise_scheduler: "flowmatch"  # 仅用于训练的噪声调度器
+        optimizer: "adamw8bit"  # 优化器：8bit AdamW 节省显存
+        lr: 1e-4  # 学习率：控制训练步长
+        # 取消注释以跳过预训练样本
+#        skip_first_sample: true
+        # 取消注释以完全禁用采样
+#        disable_sampling: true
+        # 取消注释以使用新的 vell 曲线权重。实验性的但可能产生更好的结果
+#        linear_timesteps: true
+
+        # EMA（指数移动平均）将平滑学习，但可能减慢速度。建议保持开启
+        ema_config:
+          use_ema: true  # 使用 EMA
+          ema_decay: 0.99  # EMA 衰减率
+
+        # 如果 GPU 支持，FLUX 可能需要这个，其他数据类型可能无法正常工作
+        dtype: bf16  # 混合精度训练数据类型
+      model:
+        # HuggingFace 模型名称或路径
+        name_or_path: "black-forest-labs/FLUX.1-dev"
+        is_flux: true  # 标识这是 FLUX 模型
+        quantize: true  # 运行 8bit 混合精度以节省显存
+#        low_vram: true  # 如果 GPU 连接到显示器请取消注释。量化会使用更少显存，但速度较慢
+      sample:
+        sampler: "flowmatch"  # 必须与 train.noise_scheduler 匹配
+        sample_every: 250  # 每这么多步生成样本图像
+        width: 1024   # 样本图像宽度
+        height: 1024  # 样本图像高度
+        prompts:
+          # 您可以在提示中添加 [trigger]，它将被替换为触发词
+#          - "[trigger] 拿着一个写着'我爱提示词!'的牌子"
+          - "红头发女性，在公园下棋，背景有炸弹爆炸"
+          - "一个女人拿着咖啡杯，戴着毛线帽，坐在咖啡馆里"
+          - "一匹马在夜总会当 DJ，鱼眼镜头，烟雾机，激光灯，拿着马提尼酒"
+          - "一个男人在海滩上展示他酷炫的新 T 恤，背景中有鲨鱼从水中跳出"
+          - "一只熊在雪山中建造木屋"
+          - "女性弹吉他，在舞台上，唱歌，激光灯，朋克摇滚"
+          - "留胡须的潮人，在木工坊制作椅子"
+          - "男人照片，白色背景，中景，时装模特，工作室灯光，白色背景"
+          - "一个男人拿着写着'这是一个牌子'的牌子"
+          - "一只斗牛犬，在后末日世界，拿着散弹枪，穿皮夹克，在沙漠中，有摩托车"
+        neg: ""  # FLUX 不使用负面提示
+        seed: 42  # 随机种子，确保结果可重现
+        walk_seed: true  # 每次采样递增种子
+        guidance_scale: 4  # 引导尺度，控制对提示的遵循程度
+        sample_steps: 20  # 采样步数，更多步数通常质量更好但速度更慢
+# 您可以在此处添加任何其他元信息。[name] 会被顶部的配置名称替换
+meta:
+  name: "[name]"
+  version: '1.0'
