@@ -92,11 +92,31 @@ class FluxKontextModel(BaseModel):
                 base_model_path = model_path
 
         self.print_and_status_update("Loading transformer")
-        transformer = FluxTransformer2DModel.from_pretrained(
-            transformer_path,
-            subfolder=transformer_subfolder,
-            torch_dtype=dtype
-        )
+        # 尝试加载 transformer，如果 hf_transfer 失败则回退到标准下载
+        try:
+            transformer = FluxTransformer2DModel.from_pretrained(
+                transformer_path,
+                subfolder=transformer_subfolder,
+                torch_dtype=dtype
+            )
+        except RuntimeError as e:
+            if "hf_transfer" in str(e):
+                self.print_and_status_update("HF_TRANSFER 下载失败，正在禁用快速传输并重试...")
+                # 临时禁用 hf_transfer 并重试
+                original_hf_transfer = os.environ.get("HF_HUB_ENABLE_HF_TRANSFER", "0")
+                os.environ["HF_HUB_ENABLE_HF_TRANSFER"] = "0"
+                try:
+                    transformer = FluxTransformer2DModel.from_pretrained(
+                        transformer_path,
+                        subfolder=transformer_subfolder,
+                        torch_dtype=dtype
+                    )
+                    self.print_and_status_update("使用标准下载成功加载 transformer")
+                finally:
+                    # 恢复原始设置
+                    os.environ["HF_HUB_ENABLE_HF_TRANSFER"] = original_hf_transfer
+            else:
+                raise e
         transformer.to(self.quantize_device, dtype=dtype)
 
         if self.model_config.quantize:
@@ -114,10 +134,31 @@ class FluxKontextModel(BaseModel):
         flush()
 
         self.print_and_status_update("Loading T5")
-        tokenizer_2 = T5TokenizerFast.from_pretrained(
+        # 使用同样的错误处理机制加载 T5 组件
+        def safe_load_with_hf_fallback(load_func, *args, **kwargs):
+            """安全加载函数，在 hf_transfer 失败时回退到标准下载"""
+            try:
+                return load_func(*args, **kwargs)
+            except RuntimeError as e:
+                if "hf_transfer" in str(e):
+                    self.print_and_status_update("HF_TRANSFER 下载失败，回退到标准下载...")
+                    original_hf_transfer = os.environ.get("HF_HUB_ENABLE_HF_TRANSFER", "0")
+                    os.environ["HF_HUB_ENABLE_HF_TRANSFER"] = "0"
+                    try:
+                        result = load_func(*args, **kwargs)
+                        self.print_and_status_update("使用标准下载成功")
+                        return result
+                    finally:
+                        os.environ["HF_HUB_ENABLE_HF_TRANSFER"] = original_hf_transfer
+                else:
+                    raise e
+        
+        tokenizer_2 = safe_load_with_hf_fallback(
+            T5TokenizerFast.from_pretrained,
             base_model_path, subfolder="tokenizer_2", torch_dtype=dtype
         )
-        text_encoder_2 = T5EncoderModel.from_pretrained(
+        text_encoder_2 = safe_load_with_hf_fallback(
+            T5EncoderModel.from_pretrained,
             base_model_path, subfolder="text_encoder_2", torch_dtype=dtype
         )
         text_encoder_2.to(self.device_torch, dtype=dtype)
@@ -131,14 +172,17 @@ class FluxKontextModel(BaseModel):
             flush()
 
         self.print_and_status_update("Loading CLIP")
-        text_encoder = CLIPTextModel.from_pretrained(
+        text_encoder = safe_load_with_hf_fallback(
+            CLIPTextModel.from_pretrained,
             base_model_path, subfolder="text_encoder", torch_dtype=dtype)
-        tokenizer = CLIPTokenizer.from_pretrained(
+        tokenizer = safe_load_with_hf_fallback(
+            CLIPTokenizer.from_pretrained,
             base_model_path, subfolder="tokenizer", torch_dtype=dtype)
         text_encoder.to(self.device_torch, dtype=dtype)
 
         self.print_and_status_update("Loading VAE")
-        vae = AutoencoderKL.from_pretrained(
+        vae = safe_load_with_hf_fallback(
+            AutoencoderKL.from_pretrained,
             base_model_path, subfolder="vae", torch_dtype=dtype)
 
         self.noise_scheduler = FluxKontextModel.get_train_scheduler()

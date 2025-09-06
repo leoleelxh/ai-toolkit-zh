@@ -18,8 +18,9 @@ AI Toolkit 训练启动器 - 中文版
 """
 
 import os
-# 启用 HuggingFace 快速传输
-os.environ["HF_HUB_ENABLE_HF_TRANSFER"] = "1"
+# 禁用 HuggingFace 快速传输以避免下载错误
+# 注意：禁用后下载速度会变慢，但更稳定
+os.environ["HF_HUB_ENABLE_HF_TRANSFER"] = "0"
 # 禁止 albumentations 更新检查
 os.environ["NO_ALBUMENTATIONS_UPDATE"] = "1"
 import sys
