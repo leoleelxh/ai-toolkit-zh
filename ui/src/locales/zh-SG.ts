@@ -61,6 +61,17 @@ export const zhSG = {
     trainingNamePlaceholder: "请输入训练名称",
     trainingNameDescription: "训练任务的名称，将用于识别任务并作为最终模型的文件名。名称必须唯一，只能包含字母、数字、下划线和连字符，不允许空格或特殊字符。",
     
+    // 表单卡片标题
+    jobCard: "任务设置",
+    modelCard: "模型配置",
+    quantizationCard: "量化设置",
+    multistageCard: "多阶段训练",
+    targetCard: "训练目标",
+    saveCard: "保存设置",
+    trainingCard: "训练参数",
+    datasetsCard: "数据集",
+    sampleCard: "采样设置",
+    
     // 任务状态
     status: {
       idle: "待机",
@@ -92,6 +103,22 @@ export const zhSG = {
       triggerWordPlaceholder: "例如：my_style",
       triggerWordDescription: "可选：这将是用于触发您的概念或角色的词语或标记。当使用触发词时，如果您的标题不包含触发词，它将自动添加到标题的开头。如果您没有标题，标题将变成仅仅是触发词。",
       
+      // 表单字段
+      modelArchitecture: "模型架构",
+      targetType: "目标类型",
+      dataType: "数据类型",
+      transformer: "Transformer",
+      nameOrPath: "模型名称或路径",
+      textEncoder: "文本编码器",
+      options: "选项",
+      lowVram: "低显存模式",
+      highNoise: "高噪声",
+      lowNoise: "低噪声",
+      switchEvery: "切换间隔",
+      lokrFactor: "LoKr 因子",
+      linearRank: "线性层维度",
+      convRank: "卷积层维度",
+      
       // FLUX 模型
       flux: {
         title: "FLUX.1 模型",
@@ -116,7 +143,22 @@ export const zhSG = {
       captionExtension: "标题文件扩展名",
       captionDropoutRate: "标题丢弃率",
       shuffleTokens: "打乱标记顺序",
-      cacheLatents: "缓存潜在向量到磁盘"
+      cacheLatents: "缓存潜在向量到磁盘",
+      
+      // 数据集字段
+      dataset: "数据集",
+      controlDataset: "控制数据集",
+      loraWeight: "LoRA 权重",
+      defaultCaption: "默认标题",
+      captionDropoutRate: "标题丢弃率",
+      numFrames: "帧数",
+      settings: "设置",
+      cacheLatents: "缓存潜在向量",
+      isRegularization: "是否正则化",
+      doI2v: "执行 I2V",
+      flipping: "翻转",
+      resolutions: "分辨率",
+      addDataset: "添加数据集"
     },
 
     // 训练配置
@@ -137,7 +179,29 @@ export const zhSG = {
       trainUnet: "训练 UNet",
       trainTextEncoder: "训练文本编码器",
       disableSampling: "禁用采样",
-      skipFirstSample: "跳过首次采样"
+      skipFirstSample: "跳过首次采样",
+      
+      // 额外字段
+      stagesToTrain: "训练阶段",
+      batchSize: "批量大小",
+      gradientAccumulation: "梯度累积",
+      steps: "训练步数",
+      optimizer: "优化器",
+      learningRate: "学习率",
+      weightDecay: "权重衰减",
+      timestepType: "时间步类型",
+      timestepBias: "时间步偏差",
+      noiseScheduler: "噪声调度器",
+      ema: "指数移动平均 (EMA)",
+      useEma: "使用 EMA",
+      emaDecay: "EMA 衰减率",
+      textEncoderOptimizations: "文本编码器优化",
+      unloadTe: "卸载文本编码器",
+      cacheTextEmbeddings: "缓存文本嵌入",
+      regularization: "正则化",
+      differentialOutputPreservation: "差分输出保留",
+      dopLossMultiplier: "DOP 损失倍数",
+      dopPreservationClass: "DOP 保留类别"
     },
 
     // 网络配置 (LoRA)
@@ -151,7 +215,7 @@ export const zhSG = {
       convAlpha: "卷积层 Alpha"
     },
 
-    // 保存配置
+      // 保存配置
     save: {
       title: "保存设置",
       saveEvery: "保存间隔",
@@ -161,7 +225,8 @@ export const zhSG = {
       outputFormat: "输出格式",
       pushToHub: "推送到 HuggingFace",
       hubRepoId: "HuggingFace 仓库 ID",
-      hubPrivate: "私有仓库"
+      hubPrivate: "私有仓库",
+      maxStepSavesToKeep: "最大步数保存数量"
     },
 
     // 采样配置
@@ -175,7 +240,23 @@ export const zhSG = {
       promptsPlaceholder: "请输入测试提示词，每行一个",
       guidanceScale: "引导强度",
       seed: "随机种子",
-      walkSeed: "步进种子"
+      walkSeed: "步进种子",
+      
+      // 采样字段
+      sampleEvery: "采样间隔",
+      sampler: "采样器",
+      guidanceScale: "引导强度",
+      sampleSteps: "采样步数",
+      width: "宽度",
+      height: "高度",
+      numFrames: "帧数",
+      fps: "帧率",
+      seed: "随机种子",
+      walkSeed: "步进种子",
+      advancedSampling: "高级采样",
+      skipFirstSample: "跳过首次采样",
+      forceFirstSample: "强制首次采样",
+      disableSampling: "禁用采样"
     },
 
     // 量化配置
